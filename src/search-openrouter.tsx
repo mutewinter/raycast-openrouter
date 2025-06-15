@@ -10,14 +10,14 @@ const MODALITY_TO_ICON = {
 };
 
 export default function Command() {
-  const { data: allModels = [], isLoading } = useModels();
+  const { data: allModels = [], isLoading, refresh } = useModels();
 
   const sortedModels = allModels.sort((a, b) => b.created - a.created);
 
   return (
     <List filtering isShowingDetail isLoading={isLoading} searchBarPlaceholder="Search OpenRouter models...">
       {sortedModels.map((searchResult) => (
-        <SearchListItem key={searchResult.id} searchResult={searchResult} />
+        <SearchListItem key={searchResult.id} refreshModels={refresh} searchResult={searchResult} />
       ))}
     </List>
   );
@@ -119,7 +119,7 @@ function getModelMetadata(model: OpenRouterModel) {
   );
 }
 
-function SearchListItem({ searchResult }: { searchResult: OpenRouterModel }) {
+function SearchListItem({ refreshModels, searchResult }: { refreshModels: () => void; searchResult: OpenRouterModel }) {
   const url = `https://openrouter.ai/${searchResult.id}`;
   const icon = modelToIcon(searchResult);
   return (
@@ -138,23 +138,27 @@ function SearchListItem({ searchResult }: { searchResult: OpenRouterModel }) {
               content={searchResult.id}
               shortcut={{ modifiers: ["cmd"], key: "return" }}
             />
-          </ActionPanel.Section>
-          <ActionPanel.Section>
             <Action.CopyToClipboard
               title="Copy Model URL"
               content={url}
               shortcut={{ modifiers: ["cmd"], key: "return" }}
             />
-          </ActionPanel.Section>
-          {searchResult.hugging_face_id && (
-            <ActionPanel.Section>
+            {searchResult.hugging_face_id && (
               <Action.OpenInBrowser
                 title="Open in Hugging Face"
                 url={`https://huggingface.co/${searchResult.hugging_face_id}`}
                 shortcut={{ modifiers: ["cmd", "shift"], key: "h" }}
               />
-            </ActionPanel.Section>
-          )}
+            )}
+          </ActionPanel.Section>
+          <ActionPanel.Section>
+            <Action
+              title="Refresh Model Data"
+              icon={Icon.ArrowClockwise}
+              shortcut={{ modifiers: ["cmd"], key: "r" }}
+              onAction={refreshModels}
+            />
+          </ActionPanel.Section>
         </ActionPanel>
       }
     />
