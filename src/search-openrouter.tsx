@@ -3,6 +3,12 @@ import { OpenRouterModel } from "./types";
 import { useModels } from "./hooks/useModels";
 import { modelToIcon } from "./lib/model-to-icon";
 
+const MODALITY_TO_ICON = {
+  text: Icon.Paragraph,
+  image: Icon.Image,
+  file: Icon.Document,
+};
+
 export default function Command() {
   const { data: allModels = [], isLoading } = useModels();
 
@@ -62,13 +68,21 @@ function getModelMetadata(model: OpenRouterModel) {
       <List.Item.Detail.Metadata.Separator />
       <List.Item.Detail.Metadata.TagList title="Input Modalities">
         {model.architecture.input_modalities.map((modality) => (
-          <List.Item.Detail.Metadata.TagList.Item key={modality} text={modality} />
+          <List.Item.Detail.Metadata.TagList.Item
+            key={modality}
+            text={modality}
+            icon={MODALITY_TO_ICON[modality as keyof typeof MODALITY_TO_ICON]}
+          />
         ))}
       </List.Item.Detail.Metadata.TagList>
       <List.Item.Detail.Metadata.Separator />
       <List.Item.Detail.Metadata.TagList title="Output Modalities">
         {model.architecture.output_modalities.map((modality) => (
-          <List.Item.Detail.Metadata.TagList.Item key={modality} text={modality} />
+          <List.Item.Detail.Metadata.TagList.Item
+            key={modality}
+            text={modality}
+            icon={MODALITY_TO_ICON[modality as keyof typeof MODALITY_TO_ICON]}
+          />
         ))}
       </List.Item.Detail.Metadata.TagList>
       {model.architecture.instruct_type && (
