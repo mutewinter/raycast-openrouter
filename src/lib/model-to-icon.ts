@@ -1,7 +1,6 @@
 import { OpenRouterModel } from "../types";
 
-const BASE_ICON_URL =
-  "https://unpkg.com/@lobehub/icons-static-svg@1.47.0/icons";
+const BASE_ICON_URL = "https://unpkg.com/@lobehub/icons-static-svg@1.47.0/icons";
 
 const ICONS = [
   "adobe-color",
@@ -397,15 +396,22 @@ export function modelToIcon(model: OpenRouterModel) {
   const tokenizer = model.architecture.tokenizer.toLowerCase();
   const provider = model.id.split("/")[0]?.toLowerCase();
   const providerWithoutSuffix = provider?.replaceAll(/-?(ai|llama)$/g, "");
-  const icon = ICONS.find(
-    (icon) =>
-      icon === `${provider}-color` ||
-      icon === provider ||
-      icon === `${providerWithoutSuffix}-color` ||
-      icon === providerWithoutSuffix ||
-      icon === `${tokenizer}-color` ||
-      icon === tokenizer,
-  );
+  let icon: string | undefined;
+
+  if (tokenizer === "claude" && provider === "anthropic") {
+    icon = "claude-color";
+  } else {
+    icon = ICONS.find(
+      (icon) =>
+        icon === `${provider}-color` ||
+        icon === provider ||
+        icon === `${providerWithoutSuffix}-color` ||
+        icon === providerWithoutSuffix ||
+        icon === `${tokenizer}-color` ||
+        icon === tokenizer,
+    );
+  }
+
   if (icon) {
     return `${BASE_ICON_URL}/${icon}.svg`;
   }
